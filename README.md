@@ -7,7 +7,7 @@ A modern Next.js application optimized for GitHub Pages deployment with multiple
 ## 🚀 Features
 
 - ✅ **Static Site Generation**: Optimized for GitHub Pages hosting
-- ✅ **Multiple Pages**: Home, About, Services, Contact, and Dashboard
+- ✅ **Multiple Pages**: Home, Dashboard, Employee Management, and Attendance System
 - ✅ **Firebase Authentication**: Google sign-in integration
 - ✅ **Protected Routes**: Authentication-based access control
 - ✅ **Responsive Design**: Mobile-first responsive layout
@@ -34,9 +34,8 @@ amitojinfra/
 ├── pages/
 │   ├── _app.js                 # Next.js app configuration
 │   ├── index.js                # Home page
-│   ├── about.js                # About page
-│   ├── services.js             # Services page
-│   ├── contact.js              # Contact page
+│   ├── employees.js            # Employee management page
+│   ├── attendance/             # Attendance management pages
 │   ├── auth.js                 # Authentication page
 │   └── dashboard.js            # Protected dashboard page
 ├── public/
@@ -164,22 +163,17 @@ The `next.config.js` file is configured for GitHub Pages:
 - Feature cards highlighting services
 - Call-to-action buttons
 
-### About Page (`/about`)
-- Company mission and vision
-- Core values and principles
-- Why choose AmitojInfra section
+### Employee Management (`/employees`) - Protected
+- Employee listing and management
+- Add/edit employee information
+- Employee profile management
+- Search and filter capabilities
 
-### Services Page (`/services`)
-- Comprehensive service offerings
-- Cloud infrastructure solutions
-- Network and security services
-- DevOps and automation
-- 24/7 support details
-
-### Contact Page (`/contact`)
-- Contact form (client-side only)
-- Company contact information
-- Support details and hours
+### Attendance System (`/attendance`) - Protected
+- Attendance tracking and management
+- Bulk attendance marking
+- Attendance reports and analytics
+- Real-time attendance monitoring
 
 ### Authentication Page (`/auth`)
 - Google sign-in integration
@@ -249,7 +243,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support and questions:
 
-- **Email**: contact@amitojinfra.com
+- **GitHub**: https://github.com/amitojinfra/amitojinfra
 - **Issues**: [GitHub Issues](https://github.com/amitojinfra/amitojinfra/issues)
 - **Documentation**: This README file
 

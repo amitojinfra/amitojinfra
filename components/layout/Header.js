@@ -36,21 +36,6 @@ const Header = () => {
                   Home
                 </Link>
               </li>
-              <li>
-                <Link href="/about" className={isActive('/about')}>
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className={isActive('/services')}>
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className={isActive('/contact')}>
-                  Contact
-                </Link>
-              </li>
               {user && (
                 <>
                   <li>
@@ -66,16 +51,6 @@ const Header = () => {
                   <li>
                     <Link href="/attendance" className={isActive('/attendance')}>
                       Attendance
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/firestore-demo" className={isActive('/firestore-demo')}>
-                      Firestore Demo
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/firestore-realtime" className={isActive('/firestore-realtime')}>
-                      Real-time
                     </Link>
                   </li>
                 </>
