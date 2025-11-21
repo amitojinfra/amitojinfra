@@ -68,7 +68,16 @@ export default function AttendanceDashboard() {
       console.log('Calculating statistics...');
       try {
         const today = new Date().toISOString().split('T')[0];
-        const todayStats = await attendanceService.getAttendanceStats(today);
+        const todayStart = new Date(today);
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        
+        const todayStats = await attendanceService.getAttendanceStats({
+          dateRange: {
+            start: todayStart,
+            end: todayEnd
+          }
+        });
         console.log('Statistics calculated successfully:', todayStats);
         setStatistics(todayStats);
       } catch (statsError) {
