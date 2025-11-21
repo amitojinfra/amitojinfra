@@ -2,9 +2,23 @@ import Layout from '../components/layout/Layout';
 import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 import UserProfile from '../components/auth/UserProfile';
 import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Auth() {
-  const { user, loading } = useAuth();
+  const { user, loading, firebaseConfigured } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to Firebase setup if not configured
+    if (!loading && !firebaseConfigured) {
+      const timer = setTimeout(() => {
+        router.push('/firebase-setup');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [firebaseConfigured, loading, router]);
 
   if (loading) {
     return (
@@ -16,6 +30,25 @@ export default function Auth() {
             color: '#666'
           }}>
             Loading...
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!firebaseConfigured) {
+    return (
+      <Layout title="Authentication - AmitojInfra" description="Firebase configuration required">
+        <div className="text-center">
+          <div className="card" style={{ maxWidth: '500px', margin: '0 auto' }}>
+            <h1>🔧 Firebase Configuration Required</h1>
+            <p>Firebase authentication is not configured yet.</p>
+            <p>You'll be redirected to the setup page automatically...</p>
+            <div style={{ marginTop: '1.5rem' }}>
+              <Link href="/firebase-setup" className="btn">
+                Configure Firebase Now
+              </Link>
+            </div>
           </div>
         </div>
       </Layout>

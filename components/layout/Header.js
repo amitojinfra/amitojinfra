@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const Header = () => {
   const router = useRouter();
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, firebaseConfigured } = useAuth();
 
   const isActive = (pathname) => {
     return router.pathname === pathname ? 'active' : '';
@@ -104,21 +104,41 @@ const Header = () => {
                       </button>
                     </div>
                   ) : (
-                    <Link 
-                      href="/auth" 
-                      className={`${isActive('/auth')} auth-link`}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#0070f3',
-                        color: 'white',
-                        borderRadius: '0.25rem',
-                        textDecoration: 'none',
-                        fontSize: '0.875rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      Sign In
-                    </Link>
+                    <>
+                      {!firebaseConfigured ? (
+                        <Link 
+                          href="/firebase-setup" 
+                          className={`${isActive('/firebase-setup')} auth-link`}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#dc3545',
+                            color: 'white',
+                            borderRadius: '0.25rem',
+                            textDecoration: 'none',
+                            fontSize: '0.875rem',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Setup Firebase
+                        </Link>
+                      ) : (
+                        <Link 
+                          href="/auth" 
+                          className={`${isActive('/auth')} auth-link`}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#0070f3',
+                            color: 'white',
+                            borderRadius: '0.25rem',
+                            textDecoration: 'none',
+                            fontSize: '0.875rem',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Sign In
+                        </Link>
+                      )}
+                    </>
                   )}
                 </>
               )}

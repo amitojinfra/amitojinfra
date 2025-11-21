@@ -77,13 +77,9 @@ amitojinfra/
    ```
 
 4. **Configure Firebase (Required for Authentication)**
-   ```bash
-   # Copy environment template
-   cp .env.example .env.local
-   
-   # Update .env.local with your Firebase config
-   # See FIREBASE_SETUP.md for detailed instructions
-   ```
+   - Visit `http://localhost:3000/firebase-setup` after starting the dev server
+   - Or follow the setup guide at `http://localhost:3000/firebase-setup-guide`
+   - Configuration is stored in your browser's localStorage
 
 5. **Open in browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
@@ -209,11 +205,17 @@ The application includes full Firebase authentication with:
 
 ### Setup Required:
 1. Create Firebase project
-2. Enable Google authentication
-3. Configure environment variables
+2. Enable Google authentication  
+3. Configure via web interface (`/firebase-setup`)
 4. Add authorized domains
 
-**See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for detailed setup instructions.**
+**See `/firebase-setup-guide` page for detailed setup instructions.**
+
+### Dynamic Configuration:
+- ✅ **No environment files needed** - configure via web UI
+- ✅ **localStorage based** - configuration stored in browser
+- ✅ **User-friendly setup** - guided configuration process
+- ✅ **Secure** - only required API Key and App ID needed
 
 ## 🎨 Styling
 

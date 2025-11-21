@@ -1,6 +1,8 @@
 // Authentication Context
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChange, signInWithGoogle, signOutUser, getUserProfile } from '../lib/firebase/auth';
+import { hasFirebaseConfig, getFirebaseConfig } from '../lib/firebase/configManager';
+import { reinitializeFirebase, isFirebaseInitialized } from '../lib/firebase/firebase';
 
 // Create the AuthContext
 const AuthContext = createContext({});
@@ -19,32 +21,78 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [firebaseConfigured, setFirebaseConfigured] = useState(false);
 
   useEffect(() => {
-    // Listen for authentication state changes
-    const unsubscribe = onAuthStateChange((firebaseUser) => {
-      if (firebaseUser) {
-        // User is signed in
-        setUser({
-          uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName,
-          email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL,
-          emailVerified: firebaseUser.emailVerified,
-        });
-      } else {
-        // User is signed out
-        setUser(null);
+    // Check if Firebase is configured
+    const checkFirebaseConfig = () => {
+      const configured = hasFirebaseConfig();
+      setFirebaseConfigured(configured);
+      
+      if (!configured) {
+        setLoading(false);
+        return null;
       }
-      setLoading(false);
-    });
+      
+      return configured;
+    };
+
+    // Listen for authentication state changes if Firebase is configured
+    let unsubscribe = () => {};
+    
+    if (checkFirebaseConfig()) {
+      try {
+        unsubscribe = onAuthStateChange((firebaseUser) => {
+          if (firebaseUser) {
+            // User is signed in
+            setUser({
+              uid: firebaseUser.uid,
+              displayName: firebaseUser.displayName,
+              email: firebaseUser.email,
+              photoURL: firebaseUser.photoURL,
+              emailVerified: firebaseUser.emailVerified,
+            });
+          } else {
+            // User is signed out
+            setUser(null);
+          }
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error('Failed to set up auth state listener:', error);
+        setError('Failed to initialize authentication');
+        setLoading(false);
+      }
+    }
 
     // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [firebaseConfigured]);
+
+  // Configure Firebase
+  const configureFirebase = (config) => {
+    try {
+      reinitializeFirebase(config);
+      setFirebaseConfigured(true);
+      setError(null);
+      return true;
+    } catch (error) {
+      setError('Failed to configure Firebase: ' + error.message);
+      return false;
+    }
+  };
 
   // Login with Google
   const loginWithGoogle = async () => {
+    if (!firebaseConfigured) {
+      setError('Firebase is not configured. Please configure Firebase first.');
+      return;
+    }
+
     try {
       setError(null);
       setLoading(true);
@@ -79,6 +127,8 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     error,
+    firebaseConfigured,
+    configureFirebase,
     loginWithGoogle,
     logout,
     clearError,
