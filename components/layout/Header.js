@@ -53,6 +53,11 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/employees" className={isActive('/employees')}>
+                      Employees
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/firestore-demo" className={isActive('/firestore-demo')}>
                       Firestore Demo
                     </Link>

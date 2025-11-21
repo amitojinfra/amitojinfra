@@ -102,7 +102,7 @@ export default function Services() {
           </div>
         </div>
         
-        <div className="card">
+          <div className="card">
           <h2>Firebase & Firestore</h2>
           <p>
             Modern backend-as-a-service solutions with real-time databases, 
@@ -125,7 +125,28 @@ export default function Services() {
           </div>
         </div>
         
-        <div className="card text-center mt-4">
+        <div className="card">
+          <h2>Employee Management</h2>
+          <p>
+            Comprehensive employee information management system with secure data storage,
+            search capabilities, and detailed employee profiles.
+          </p>
+          <ul>
+            <li>Employee profile management</li>
+            <li>Aadhar ID verification system</li>
+            <li>Joining date tracking</li>
+            <li>Age and demographic data</li>
+            <li>Advanced search and filtering</li>
+          </ul>
+          <div style={{ marginTop: '15px' }}>
+            <Link href="/employees" className="btn-small">
+              Manage Employees
+            </Link>
+            <Link href="/employees/new" className="btn-small" style={{ marginLeft: '10px' }}>
+              Add Employee
+            </Link>
+          </div>
+        </div>        <div className="card text-center mt-4">
           <h2>Custom Solutions</h2>
           <p>
             Every business is unique. We work with you to develop custom infrastructure 
