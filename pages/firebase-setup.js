@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { hasFirebaseConfig } from '../lib/firebase/configManager';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function FirebaseSetup() {
   const { configureFirebase, firebaseConfigured } = useAuth();
@@ -85,7 +86,7 @@ export default function FirebaseSetup() {
               <li>Add authorized domains (including this domain)</li>
             </ol>
             <p style={{ color: '#666', fontSize: '0.9rem', marginTop: '1rem' }}>
-              <strong>Need help?</strong> Check our <a href="/firebase-setup-guide" style={{ color: '#0070f3' }}>detailed setup guide</a> for step-by-step instructions.
+              <strong>Need help?</strong> Check our <Link href="/firebase-setup-guide" style={{ color: '#0070f3' }}>detailed setup guide</Link> for step-by-step instructions.
             </p>
           </div>
 

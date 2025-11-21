@@ -46,11 +46,23 @@ const Header = () => {
                 </Link>
               </li>
               {user && (
-                <li>
-                  <Link href="/dashboard" className={isActive('/dashboard')}>
-                    Dashboard
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link href="/dashboard" className={isActive('/dashboard')}>
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/firestore-demo" className={isActive('/firestore-demo')}>
+                      Firestore Demo
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/firestore-realtime" className={isActive('/firestore-realtime')}>
+                      Real-time
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
             

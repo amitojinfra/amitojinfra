@@ -102,6 +102,29 @@ export default function Services() {
           </div>
         </div>
         
+        <div className="card">
+          <h2>Firebase & Firestore</h2>
+          <p>
+            Modern backend-as-a-service solutions with real-time databases, 
+            authentication, and cloud functions for rapid application development.
+          </p>
+          <ul>
+            <li>Real-time database management</li>
+            <li>User authentication systems</li>
+            <li>Cloud function deployment</li>
+            <li>File storage solutions</li>
+            <li>Analytics and monitoring</li>
+          </ul>
+          <div style={{ marginTop: '15px' }}>
+            <Link href="/firestore-demo" className="btn-small">
+              Try Firestore Demo
+            </Link>
+            <Link href="/firestore-realtime" className="btn-small" style={{ marginLeft: '10px' }}>
+              Real-time Demo
+            </Link>
+          </div>
+        </div>
+        
         <div className="card text-center mt-4">
           <h2>Custom Solutions</h2>
           <p>
