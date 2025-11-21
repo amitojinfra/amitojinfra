@@ -8,6 +8,12 @@ const Header = () => {
   const { user, logout, loading, firebaseConfigured } = useAuth();
 
   const isActive = (pathname) => {
+    if (pathname === '/attendance') {
+      return router.pathname.startsWith('/attendance') ? 'active' : '';
+    }
+    if (pathname === '/employees') {
+      return router.pathname.startsWith('/employees') ? 'active' : '';
+    }
     return router.pathname === pathname ? 'active' : '';
   };
 
@@ -55,6 +61,11 @@ const Header = () => {
                   <li>
                     <Link href="/employees" className={isActive('/employees')}>
                       Employees
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/attendance" className={isActive('/attendance')}>
+                      Attendance
                     </Link>
                   </li>
                   <li>

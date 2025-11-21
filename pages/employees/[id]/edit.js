@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../../components/layout/Layout';
 import EmployeeForm from '../../../components/employee/EmployeeForm';
 import ProtectedRoute from '../../../components/shared/ProtectedRoute';
-import employeeService from '../../../lib/services/simpleEmployeeService';
+import employeeService from '../../../lib/services/employeeService';
 import Link from 'next/link';
 
 export default function EditEmployeePage() {
