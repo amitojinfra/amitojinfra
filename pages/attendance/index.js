@@ -121,11 +121,45 @@ export default function AttendanceDashboard() {
       return;
     }
 
+    setError('');
+    
     try {
-      await Promise.all(recordIds.map(id => attendanceService.deleteAttendance(id)));
+      console.log('Deleting attendance records:', recordIds);
+      
+      // Delete all records and track results
+      const deleteResults = await Promise.all(
+        recordIds.map(async (id) => {
+          try {
+            const deleted = await attendanceService.deleteAttendance(id);
+            return { id, success: true, deleted };
+          } catch (error) {
+            console.error(`Failed to delete record ${id}:`, error);
+            return { id, success: false, error: error.message };
+          }
+        })
+      );
+
+      // Count successful deletions
+      const successCount = deleteResults.filter(result => result.success && result.deleted).length;
+      const notFoundCount = deleteResults.filter(result => result.success && !result.deleted).length;
+      const errorCount = deleteResults.filter(result => !result.success).length;
+
+      console.log(`Deletion results: ${successCount} deleted, ${notFoundCount} not found, ${errorCount} errors`);
+
+      // Reload data regardless of some failures
       await loadData();
+
+      // Show appropriate message
+      if (errorCount > 0) {
+        setError(`Some records could not be deleted. ${successCount} deleted successfully, ${errorCount} failed.`);
+      } else if (notFoundCount > 0 && successCount === 0) {
+        setError(`No records were found to delete. They may have already been removed.`);
+      } else if (notFoundCount > 0) {
+        // Some success, some not found - this is usually fine
+        console.log(`${successCount} records deleted, ${notFoundCount} were already removed.`);
+      }
     } catch (err) {
-      console.error('Error deleting attendance:', err);
+      console.error('Error during bulk deletion:', err);
       setError('Failed to delete attendance records. Please try again.');
     }
   };
