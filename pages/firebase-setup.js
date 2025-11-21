@@ -93,8 +93,17 @@ export default function FirebaseSetup() {
           <div className="card">
             <h2>⚙️ Configuration</h2>
             <p className="mb-3">
-              Enter your Firebase project configuration below. Only <strong>API Key</strong> and <strong>App ID</strong> are required for basic authentication.
+              Paste your complete Firebase configuration JSON below. You can copy this directly from the Firebase Console.
             </p>
+            <div style={{ backgroundColor: '#f8f9fa', padding: '1rem', borderRadius: '0.375rem', marginBottom: '1rem', border: '1px solid #e9ecef' }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>📋 How to get your config:</h4>
+              <ol style={{ paddingLeft: '1.5rem', margin: 0, color: '#6c757d', fontSize: '0.9rem' }}>
+                <li>Go to Firebase Console → Project Settings → General</li>
+                <li>Scroll down to "Your apps" section</li>
+                <li>Click on your web app or create one</li>
+                <li>Copy the <code>firebaseConfig</code> object</li>
+              </ol>
+            </div>
             
             <FirebaseConfigForm 
               onConfigSaved={handleConfigSaved}
@@ -114,13 +123,30 @@ export default function FirebaseSetup() {
           </div>
 
           <div className="card mt-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e9ecef' }}>
-            <h3>💡 Quick Setup Tips</h3>
+            <h3>💡 Setup Tips</h3>
             <div style={{ fontSize: '0.9rem', color: '#555' }}>
-              <p><strong>Finding Your Config:</strong></p>
-              <p>In Firebase Console → Project Settings → General → Your apps → Web app config</p>
+              <p><strong>Example Configuration:</strong></p>
+              <pre style={{ 
+                backgroundColor: '#e9ecef', 
+                padding: '0.75rem', 
+                borderRadius: '0.25rem', 
+                fontFamily: 'Monaco, Consolas, monospace',
+                fontSize: '0.8rem',
+                overflow: 'auto'
+              }}>
+{`{
+  "apiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "authDomain": "your-project-id.firebaseapp.com",
+  "projectId": "your-project-id",
+  "storageBucket": "your-project-id.firebasestorage.app",
+  "messagingSenderId": "xxxxxxxxxxxx",
+  "appId": "1:xxxxxxxxxxxx:web:xxxxxxxxxxxxxxxxxxxxxx",
+  "measurementId": "G-XXXXXXXXXX"
+}`}
+              </pre>
               
               <p style={{ marginTop: '1rem' }}><strong>Authorized Domains:</strong></p>
-              <p>Add these domains in Firebase Console → Authentication → Settings → Authorized domains:</p>
+              <p>Don't forget to add these domains in Firebase Console → Authentication → Settings:</p>
               <ul style={{ paddingLeft: '1.5rem' }}>
                 <li><code>localhost</code> (for development)</li>
                 <li><code>amitojinfra.github.io</code> (for production)</li>

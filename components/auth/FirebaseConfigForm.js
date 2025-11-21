@@ -10,6 +10,7 @@ import {
 
 const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => {
   const [config, setConfig] = useState(getDefaultFirebaseConfig());
+  const [jsonInput, setJsonInput] = useState('');
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -19,16 +20,24 @@ const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => 
     const existingConfig = getFirebaseConfig();
     if (existingConfig) {
       setConfig(existingConfig);
+      setJsonInput(JSON.stringify(existingConfig, null, 2));
     }
   }, []);
 
-  const handleInputChange = (field, value) => {
-    setConfig(prev => ({
-      ...prev,
-      [field]: value.trim()
-    }));
+  const handleJsonInputChange = (value) => {
+    setJsonInput(value);
     setErrors([]); // Clear errors when user types
     setSuccess(false);
+    
+    // Try to parse JSON and update config in real-time
+    try {
+      if (value.trim()) {
+        const parsedConfig = JSON.parse(value);
+        setConfig(parsedConfig);
+      }
+    } catch (error) {
+      // Don't update config if JSON is invalid, just wait for submit
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -38,8 +47,18 @@ const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => 
     setSuccess(false);
 
     try {
+      // Parse JSON input
+      let parsedConfig;
+      try {
+        parsedConfig = JSON.parse(jsonInput);
+      } catch (parseError) {
+        setErrors(['Invalid JSON format. Please check your configuration and try again.']);
+        setLoading(false);
+        return;
+      }
+
       // Validate configuration
-      const validation = validateFirebaseConfig(config);
+      const validation = validateFirebaseConfig(parsedConfig);
       
       if (!validation.isValid) {
         setErrors(validation.errors);
@@ -48,13 +67,14 @@ const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => 
       }
 
       // Save configuration
-      const saved = saveFirebaseConfig(config);
+      const saved = saveFirebaseConfig(parsedConfig);
       
       if (saved) {
+        setConfig(parsedConfig);
         setSuccess(true);
         setTimeout(() => {
           if (onConfigSaved) {
-            onConfigSaved(config);
+            onConfigSaved(parsedConfig);
           }
         }, 1000);
       } else {
@@ -70,171 +90,84 @@ const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => 
   const handleClear = () => {
     if (window.confirm('Are you sure you want to clear the Firebase configuration?')) {
       clearFirebaseConfig();
-      setConfig(getDefaultFirebaseConfig());
+      const defaultConfig = getDefaultFirebaseConfig();
+      setConfig(defaultConfig);
+      setJsonInput('');
       setSuccess(false);
       setErrors([]);
     }
+  };
+
+  const handleLoadExample = () => {
+    const exampleConfig = {
+      apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      authDomain: "your-project-id.firebaseapp.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project-id.firebasestorage.app",
+      messagingSenderId: "xxxxxxxxxxxx",
+      appId: "1:xxxxxxxxxxxx:web:xxxxxxxxxxxxxxxxxxxxxx",
+      measurementId: "G-XXXXXXXXXX"
+    };
+    setJsonInput(JSON.stringify(exampleConfig, null, 2));
+    setConfig(exampleConfig);
   };
 
   return (
     <div className="firebase-config-form">
       <form onSubmit={handleSubmit}>
         <div className="form-group mb-3">
-          <label htmlFor="apiKey" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#d32f2f' }}>
-            API Key *
+          <label htmlFor="firebaseConfig" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#d32f2f' }}>
+            Firebase Configuration JSON *
           </label>
-          <input
-            type="text"
-            id="apiKey"
-            value={config.apiKey}
-            onChange={(e) => handleInputChange('apiKey', e.target.value)}
-            placeholder="Enter your Firebase API Key"
+          <textarea
+            id="firebaseConfig"
+            value={jsonInput}
+            onChange={(e) => handleJsonInputChange(e.target.value)}
+            placeholder={`Paste your complete Firebase configuration here:
+
+{
+  "apiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "authDomain": "your-project-id.firebaseapp.com",
+  "projectId": "your-project-id",
+  "storageBucket": "your-project-id.firebasestorage.app",
+  "messagingSenderId": "xxxxxxxxxxxx",
+  "appId": "1:xxxxxxxxxxxx:web:xxxxxxxxxxxxxxxxxxxxxx",
+  "measurementId": "G-XXXXXXXXXX"
+}`}
             required
+            rows={15}
             style={{
               width: '100%',
               padding: '0.75rem',
               border: '1px solid #ddd',
               borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
+              fontSize: '0.85rem',
+              fontFamily: 'Monaco, Consolas, "Courier New", monospace',
+              backgroundColor: '#f8f9fa',
+              resize: 'vertical',
+              minHeight: '300px'
             }}
           />
-          <small style={{ color: '#666', fontSize: '0.8rem' }}>
-            Required: Get this from Firebase Console → Project Settings → General
-          </small>
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="appId" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#d32f2f' }}>
-            App ID *
-          </label>
-          <input
-            type="text"
-            id="appId"
-            value={config.appId}
-            onChange={(e) => handleInputChange('appId', e.target.value)}
-            placeholder="Enter your Firebase App ID"
-            required
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-          <small style={{ color: '#666', fontSize: '0.8rem' }}>
-            Required: Get this from Firebase Console → Project Settings → General
-          </small>
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="authDomain" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            Auth Domain
-          </label>
-          <input
-            type="text"
-            id="authDomain"
-            value={config.authDomain}
-            onChange={(e) => handleInputChange('authDomain', e.target.value)}
-            placeholder="your-project-id.firebaseapp.com"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="projectId" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            Project ID
-          </label>
-          <input
-            type="text"
-            id="projectId"
-            value={config.projectId}
-            onChange={(e) => handleInputChange('projectId', e.target.value)}
-            placeholder="your-project-id"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="storageBucket" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            Storage Bucket
-          </label>
-          <input
-            type="text"
-            id="storageBucket"
-            value={config.storageBucket}
-            onChange={(e) => handleInputChange('storageBucket', e.target.value)}
-            placeholder="your-project-id.appspot.com"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="messagingSenderId" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            Messaging Sender ID
-          </label>
-          <input
-            type="text"
-            id="messagingSenderId"
-            value={config.messagingSenderId}
-            onChange={(e) => handleInputChange('messagingSenderId', e.target.value)}
-            placeholder="123456789012"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-        </div>
-
-        <div className="form-group mb-4">
-          <label htmlFor="measurementId" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            Measurement ID (Optional)
-          </label>
-          <input
-            type="text"
-            id="measurementId"
-            value={config.measurementId}
-            onChange={(e) => handleInputChange('measurementId', e.target.value)}
-            placeholder="G-XXXXXXXXXX"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.375rem',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace'
-            }}
-          />
-          <small style={{ color: '#666', fontSize: '0.8rem' }}>
-            Optional: For Google Analytics integration
-          </small>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+            <small style={{ color: '#666', fontSize: '0.8rem' }}>
+              Get this from Firebase Console → Project Settings → General → Your apps → Config
+            </small>
+            <button
+              type="button"
+              onClick={handleLoadExample}
+              style={{
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.75rem',
+                color: '#0070f3',
+                background: 'none',
+                border: '1px solid #0070f3',
+                borderRadius: '0.25rem',
+                cursor: 'pointer'
+              }}
+            >
+              Load Example
+            </button>
+          </div>
         </div>
 
         {errors.length > 0 && (
@@ -269,7 +202,7 @@ const FirebaseConfigForm = ({ onConfigSaved, onCancel, showCancel = false }) => 
         <div className="form-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !jsonInput.trim()}
             className="btn"
             style={{ flex: 1, minWidth: '120px' }}
           >
