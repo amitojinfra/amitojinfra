@@ -1,0 +1,42 @@
+{
+  "name": "amitojinfra-nextjs-app",
+  "version": "1.0.0",
+  "description": "Next.js application optimized for GitHub Pages deployment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build",
+    "build:github": "npm run export && npm run prepare:github",
+    "prepare:github": "cp public/.nojekyll out/ && echo 'Build complete! Upload the out/ folder to GitHub Pages'",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "github-pages",
+    "static-site"
+  ],
+  "author": "amitojinfra",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amitojinfra/amitojinfra.git"
+  },
+  "homepage": "https://amitojinfra.github.io/amitojinfra"
+}
