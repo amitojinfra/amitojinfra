@@ -7,7 +7,9 @@ A modern Next.js application optimized for GitHub Pages deployment with multiple
 ## 🚀 Features
 
 - ✅ **Static Site Generation**: Optimized for GitHub Pages hosting
-- ✅ **Multiple Pages**: Home, About, Services, and Contact pages
+- ✅ **Multiple Pages**: Home, About, Services, Contact, and Dashboard
+- ✅ **Firebase Authentication**: Google sign-in integration
+- ✅ **Protected Routes**: Authentication-based access control
 - ✅ **Responsive Design**: Mobile-first responsive layout
 - ✅ **SEO Optimized**: Meta tags and proper page structure
 - ✅ **Modern UI**: Clean and professional design
@@ -22,16 +24,21 @@ amitojinfra/
 │   └── workflows/
 │       └── deploy.yml          # GitHub Actions deployment
 ├── components/
-│   └── layout/
-│       ├── Header.js           # Navigation header
-│       ├── Footer.js           # Site footer
-│       └── Layout.js           # Main layout wrapper
+│   ├── auth/                   # Authentication components
+│   ├── layout/                 # Layout components
+│   └── shared/                 # Shared/reusable components
+├── contexts/
+│   └── AuthContext.js          # Firebase auth context
+├── lib/
+│   └── firebase/               # Firebase configuration and services
 ├── pages/
 │   ├── _app.js                 # Next.js app configuration
 │   ├── index.js                # Home page
 │   ├── about.js                # About page
 │   ├── services.js             # Services page
-│   └── contact.js              # Contact page
+│   ├── contact.js              # Contact page
+│   ├── auth.js                 # Authentication page
+│   └── dashboard.js            # Protected dashboard page
 ├── public/
 │   ├── .nojekyll               # GitHub Pages configuration
 │   └── favicon.svg             # Site favicon
@@ -69,7 +76,16 @@ amitojinfra/
    npm run dev
    ```
 
-4. **Open in browser**
+4. **Configure Firebase (Required for Authentication)**
+   ```bash
+   # Copy environment template
+   cp .env.example .env.local
+   
+   # Update .env.local with your Firebase config
+   # See FIREBASE_SETUP.md for detailed instructions
+   ```
+
+5. **Open in browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Available Scripts
@@ -168,6 +184,36 @@ The `next.config.js` file is configured for GitHub Pages:
 - Contact form (client-side only)
 - Company contact information
 - Support details and hours
+
+### Authentication Page (`/auth`)
+- Google sign-in integration
+- User profile display
+- Authentication status management
+
+### Dashboard Page (`/dashboard`) - Protected
+- User profile information
+- Account statistics
+- Quick action buttons
+- Recent activity feed
+- Personalized content
+
+## 🔐 Firebase Authentication
+
+The application includes full Firebase authentication with:
+
+- **Google Sign-in**: Secure OAuth integration
+- **User Context**: Global authentication state management
+- **Protected Routes**: Authentication-based access control
+- **User Profile**: Display user information and avatar
+- **Session Management**: Persistent login state
+
+### Setup Required:
+1. Create Firebase project
+2. Enable Google authentication
+3. Configure environment variables
+4. Add authorized domains
+
+**See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for detailed setup instructions.**
 
 ## 🎨 Styling
 

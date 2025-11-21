@@ -149,8 +149,20 @@ img {
     gap: 1rem;
   }
   
+  .nav > div {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
   .nav-links {
     gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .auth-section {
+    order: -1;
   }
   
   .container {
