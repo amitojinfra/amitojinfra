@@ -95,6 +95,9 @@ export default function Dashboard() {
                 <Link href="/payments" className="btn btn-secondary" style={{ textAlign: 'left', textDecoration: 'none', display: 'block' }}>
                   💰 Payment Management
                 </Link>
+                <Link href="/salary" className="btn btn-secondary" style={{ textAlign: 'left', textDecoration: 'none', display: 'block' }}>
+                  💵 Salary Calculation
+                </Link>
               </div>
             </div>
 
