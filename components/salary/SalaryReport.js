@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import salaryService from '../../lib/services/salaryService';
+import salaryService, { SALARY_STATUS, SALARY_RECORD_TYPES } from '../../lib/services/salaryService';
 
 const SalaryReport = ({ 
   salaryData = null, 
@@ -57,9 +57,9 @@ const SalaryReport = ({
   // Get status color class
   const getStatusClass = (status) => {
     switch (status) {
-      case 'due':
+      case SALARY_STATUS.DUE:
         return 'status-due';
-      case 'overpaid':
+      case SALARY_STATUS.OVERPAID:
         return 'status-overpaid';
       default:
         return '';
@@ -273,7 +273,7 @@ const SalaryReport = ({
             <span className={`financial-value net ${getStatusClass(financial.netSalaryStatus)}`}>
               {formatCurrency(Math.abs(financial.netSalary))}
               <span className="status-text">
-                ({financial.netSalaryStatus === 'due' ? 'Due' : 'Overpaid'})
+                ({financial.netSalaryStatus === SALARY_STATUS.DUE ? 'Due' : 'Overpaid'})
               </span>
             </span>
           </div>
@@ -335,7 +335,7 @@ const SalaryReport = ({
             <li>Overtime hours are included in the total hours calculation</li>
             <li>Partial days are calculated based on actual check-in and check-out times</li>
             <li>All payments made within the selected date range are considered</li>
-            {financial.netSalaryStatus === 'overpaid' && (
+            {financial.netSalaryStatus === SALARY_STATUS.OVERPAID && (
               <li className="note-warning">
                 <strong>Note:</strong> Employee has been overpaid by {formatCurrency(Math.abs(financial.netSalary))}
               </li>
