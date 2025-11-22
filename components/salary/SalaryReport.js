@@ -146,12 +146,8 @@ const SalaryReport = ({
         <h2>Rate Configuration</h2>
         <div className="info-grid">
           <div className="info-item">
-            <span className="info-label">Hourly Rate:</span>
-            <span className="info-value">{formatCurrency(rates.hourlyRate)}</span>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Expected Daily Hours:</span>
-            <span className="info-value">{rates.dailyHours} hours</span>
+            <span className="info-label">Daily Rate:</span>
+            <span className="info-value">{formatCurrency(rates.dailyRate)}</span>
           </div>
           <div className="info-item">
             <span className="info-label">Daily Rate:</span>
@@ -329,7 +325,7 @@ const SalaryReport = ({
         <h2>Calculation Notes</h2>
         <div className="calculation-notes">
           <ul>
-            <li>Gross salary is calculated as: Total Hours Worked × Hourly Rate</li>
+            <li>Gross salary is calculated as: Working Days × Daily Rate</li>
             <li>Net salary is calculated as: Gross Salary - Total Payments Made</li>
             <li>Only attendance records marked as "Present" are considered for salary calculation</li>
             <li>Overtime hours are included in the total hours calculation</li>

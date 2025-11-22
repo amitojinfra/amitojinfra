@@ -11,8 +11,7 @@ const SalaryCalculationForm = ({
     employeeId: '',
     startDate: '',
     endDate: '',
-    hourlyRate: '',
-    dailyHours: '8'
+    dailyRate: '750'
   });
 
   const [errors, setErrors] = useState({});
@@ -25,8 +24,7 @@ const SalaryCalculationForm = ({
         employeeId: initialData.employeeId || '',
         startDate: initialData.startDate || '',
         endDate: initialData.endDate || '',
-        hourlyRate: initialData.hourlyRate || '',
-        dailyHours: initialData.dailyHours || '8'
+        dailyRate: initialData.dailyRate || '750'
       });
     } else {
       // Set default date range (current month)
@@ -59,8 +57,8 @@ const SalaryCalculationForm = ({
     }
   };
 
-  // Handle hourly rate change with validation
-  const handleHourlyRateChange = (e) => {
+  // Handle daily rate change with validation
+  const handleDailyRateChange = (e) => {
     let value = e.target.value;
     
     // Remove any non-numeric characters except decimal point
@@ -79,41 +77,14 @@ const SalaryCalculationForm = ({
 
     setFormData(prev => ({
       ...prev,
-      hourlyRate: value
+      dailyRate: value
     }));
 
     // Clear error
-    if (errors.hourlyRate) {
+    if (errors.dailyRate) {
       setErrors(prev => ({
         ...prev,
-        hourlyRate: ''
-      }));
-    }
-  };
-
-  // Handle daily hours change
-  const handleDailyHoursChange = (e) => {
-    let value = e.target.value;
-    
-    // Allow only numbers and decimal point
-    value = value.replace(/[^0-9.]/g, '');
-    
-    // Limit to reasonable range
-    const numValue = parseFloat(value);
-    if (numValue > 24) {
-      value = '24';
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      dailyHours: value
-    }));
-
-    // Clear error
-    if (errors.dailyHours) {
-      setErrors(prev => ({
-        ...prev,
-        dailyHours: ''
+        dailyRate: ''
       }));
     }
   };
@@ -124,8 +95,7 @@ const SalaryCalculationForm = ({
       formData.employeeId,
       formData.startDate,
       formData.endDate,
-      parseFloat(formData.hourlyRate),
-      parseFloat(formData.dailyHours)
+      parseFloat(formData.dailyRate)
     );
 
     setErrors(validation.errors);
@@ -147,8 +117,7 @@ const SalaryCalculationForm = ({
         employeeId: formData.employeeId,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        hourlyRate: parseFloat(formData.hourlyRate),
-        dailyHours: parseFloat(formData.dailyHours)
+        dailyRate: parseFloat(formData.dailyRate)
       };
 
       await onCalculate(calculationData);
@@ -174,18 +143,11 @@ const SalaryCalculationForm = ({
     return 0;
   };
 
-  // Calculate expected total hours
-  const getExpectedHours = () => {
-    const totalDays = getTotalDays();
-    const dailyHours = parseFloat(formData.dailyHours) || 0;
-    return (totalDays * dailyHours).toFixed(1);
-  };
-
   // Calculate expected gross salary
   const getExpectedGrossSalary = () => {
-    const expectedHours = parseFloat(getExpectedHours());
-    const hourlyRate = parseFloat(formData.hourlyRate) || 0;
-    return (expectedHours * hourlyRate).toFixed(2);
+    const totalDays = getTotalDays();
+    const dailyRate = parseFloat(formData.dailyRate) || 0;
+    return (totalDays * dailyRate).toFixed(2);
   };
 
   return (
@@ -271,55 +233,32 @@ const SalaryCalculationForm = ({
             )}
           </div>
 
-          {/* Hourly Rate */}
-          <div className="form-group">
-            <label htmlFor="hourlyRate" className="form-label">
-              Hourly Rate (₹) *
+          {/* Daily Rate */}
+          <div className="form-group full-width">
+            <label htmlFor="dailyRate" className="form-label">
+              Daily Rate (₹) *
             </label>
             <input
               type="text"
-              id="hourlyRate"
-              name="hourlyRate"
-              value={formData.hourlyRate}
-              onChange={handleHourlyRateChange}
-              className={`form-input ${errors.hourlyRate ? 'error' : ''}`}
-              placeholder="Enter hourly rate"
+              id="dailyRate"
+              name="dailyRate"
+              value={formData.dailyRate}
+              onChange={handleDailyRateChange}
+              className={`form-input ${errors.dailyRate ? 'error' : ''}`}
+              placeholder="750"
               required
             />
-            {errors.hourlyRate && (
-              <div className="error-message">{errors.hourlyRate}</div>
+            {errors.dailyRate && (
+              <div className="error-message">{errors.dailyRate}</div>
             )}
             <div className="field-hint">
-              Enter the hourly rate in Indian Rupees (₹1 - ₹10,000)
-            </div>
-          </div>
-
-          {/* Daily Hours */}
-          <div className="form-group">
-            <label htmlFor="dailyHours" className="form-label">
-              Expected Daily Hours *
-            </label>
-            <input
-              type="text"
-              id="dailyHours"
-              name="dailyHours"
-              value={formData.dailyHours}
-              onChange={handleDailyHoursChange}
-              className={`form-input ${errors.dailyHours ? 'error' : ''}`}
-              placeholder="8"
-              required
-            />
-            {errors.dailyHours && (
-              <div className="error-message">{errors.dailyHours}</div>
-            )}
-            <div className="field-hint">
-              Expected working hours per day (typically 8 hours)
+              Enter the daily rate in Indian Rupees (₹1 - ₹50,000). Default is ₹750 per day.
             </div>
           </div>
         </div>
 
         {/* Calculation Preview */}
-        {formData.startDate && formData.endDate && formData.hourlyRate && formData.dailyHours && (
+        {formData.startDate && formData.endDate && formData.dailyRate && (
           <div className="calculation-preview">
             <h3>Calculation Preview</h3>
             <div className="preview-grid">
@@ -328,12 +267,8 @@ const SalaryCalculationForm = ({
                 <span className="preview-value">{getTotalDays()} days</span>
               </div>
               <div className="preview-item">
-                <span className="preview-label">Expected Hours:</span>
-                <span className="preview-value">{getExpectedHours()} hours</span>
-              </div>
-              <div className="preview-item">
-                <span className="preview-label">Hourly Rate:</span>
-                <span className="preview-value">₹{formData.hourlyRate}/hour</span>
+                <span className="preview-label">Daily Rate:</span>
+                <span className="preview-value">₹{formData.dailyRate}/day</span>
               </div>
               <div className="preview-item">
                 <span className="preview-label">Expected Gross Salary:</span>
