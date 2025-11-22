@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Layout from '../components/layout/Layout';
 import ProtectedRoute from '../components/shared/ProtectedRoute';
 import UserProfile from '../components/auth/UserProfile';
@@ -78,6 +79,22 @@ export default function Dashboard() {
                   <span>Account created</span>
                   <span style={{ fontSize: '0.875rem' }}>Today</span>
                 </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <h2>Management</h2>
+              <p>Manage your organization's core modules:</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                <Link href="/employees" className="btn btn-secondary" style={{ textAlign: 'left', textDecoration: 'none', display: 'block' }}>
+                  👥 Employee Management
+                </Link>
+                <Link href="/attendance" className="btn btn-secondary" style={{ textAlign: 'left', textDecoration: 'none', display: 'block' }}>
+                  ⏰ Attendance Tracking
+                </Link>
+                <Link href="/payments" className="btn btn-secondary" style={{ textAlign: 'left', textDecoration: 'none', display: 'block' }}>
+                  💰 Payment Management
+                </Link>
               </div>
             </div>
 
