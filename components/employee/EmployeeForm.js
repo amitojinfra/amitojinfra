@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { validateEmployee, createEmptyEmployee } from '../../lib/models/Employee';
+import { validateEmployee, createEmptyEmployee, EmployeeDesignations } from '../../lib/models/Employee';
 
 const EmployeeForm = ({ 
   initialData = null, 
@@ -17,6 +17,7 @@ const EmployeeForm = ({
     if (initialData) {
       setFormData({
         name: initialData.name || '',
+        designation: initialData.designation || '',
         aadhar_id: initialData.aadhar_id || '',
         joining_date: initialData.joining_date ? 
           (typeof initialData.joining_date === 'string' ? 
@@ -162,6 +163,34 @@ const EmployeeForm = ({
           {errors.name && (
             <div className="error-message">{errors.name}</div>
           )}
+        </div>
+
+        {/* Designation Field */}
+        <div className="form-group">
+          <label htmlFor="designation" className="form-label">
+            Designation *
+          </label>
+          <select
+            id="designation"
+            name="designation"
+            value={formData.designation}
+            onChange={handleInputChange}
+            className={`form-input ${errors.designation ? 'error' : ''}`}
+            required
+          >
+            <option value="">Select designation</option>
+            {Object.entries(EmployeeDesignations).map(([key, value]) => (
+              <option key={key} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+          {errors.designation && (
+            <div className="error-message">{errors.designation}</div>
+          )}
+          <div className="field-hint">
+            Select the employee's job designation
+          </div>
         </div>
 
         {/* Aadhar ID Field */}

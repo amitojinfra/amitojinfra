@@ -371,6 +371,11 @@ const AttendanceForm = ({
 
                       <div className="employee-info">
                         <div className="employee-id">ID: {employee.id.slice(0, 8)}...</div>
+                        {employee.designation && (
+                          <div className="employee-designation">
+                            {employee.designation}
+                          </div>
+                        )}
                         {employee.aadhar_id && (
                           <div className="employee-aadhar">
                             Aadhar: {employee.aadhar_id.slice(0, 4)}****{employee.aadhar_id.slice(-4)}
@@ -650,6 +655,12 @@ const AttendanceForm = ({
 
         .employee-info div {
           margin-bottom: 2px;
+        }
+
+        .employee-designation {
+          color: #1d4ed8 !important;
+          font-weight: 600;
+          text-transform: capitalize;
         }
 
         .status-controls {

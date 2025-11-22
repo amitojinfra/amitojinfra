@@ -137,6 +137,8 @@ const EmployeeList = ({
             <option value="createdAt-asc">Oldest Added</option>
             <option value="name-asc">Name (A-Z)</option>
             <option value="name-desc">Name (Z-A)</option>
+            <option value="designation-asc">Designation (A-Z)</option>
+            <option value="designation-desc">Designation (Z-A)</option>
             <option value="joining_date-desc">Latest Joined</option>
             <option value="joining_date-asc">Earliest Joined</option>
             <option value="age-desc">Age (High to Low)</option>
@@ -221,6 +223,11 @@ const EmployeeList = ({
                     <div className="detail-row">
                       <span className="detail-label">Employee ID:</span>
                       <span className="detail-value">{employee.id.slice(0, 8)}...</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span className="detail-label">Designation:</span>
+                      <span className="detail-value designation">{formattedEmployee.designation}</span>
                     </div>
 
                     {employee.aadhar_id && (
@@ -526,6 +533,12 @@ const EmployeeList = ({
         .service-years {
           color: #059669;
           font-weight: 600;
+        }
+
+        .designation {
+          color: #1d4ed8;
+          font-weight: 600;
+          text-transform: capitalize;
         }
 
         .card-footer {
