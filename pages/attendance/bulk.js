@@ -48,13 +48,29 @@ export default function BulkAttendance() {
     setSuccess('');
 
     try {
-      await attendanceService.markBulkAttendance(attendanceData);
-      setSuccess(`Successfully marked attendance for ${attendanceData.length} employees!`);
+      const results = await attendanceService.markBulkAttendance(attendanceData);
       
-      // Auto-redirect after success
+      // Create detailed success message
+      let successMessage = `Successfully processed attendance for ${results.success} employees!`;
+      
+      if (results.created > 0 && results.updated > 0) {
+        successMessage += ` (${results.created} new records, ${results.updated} updated)`;
+      } else if (results.updated > 0) {
+        successMessage += ` (${results.updated} records updated - attendance already existed for today)`;
+      } else if (results.created > 0) {
+        successMessage += ` (${results.created} new records created)`;
+      }
+      
+      if (results.errors > 0) {
+        successMessage += ` Note: ${results.errors} records failed to process.`;
+      }
+      
+      setSuccess(successMessage);
+      
+      // Auto-redirect after success (longer delay for detailed message)
       setTimeout(() => {
         router.push('/attendance');
-      }, 2000);
+      }, 3000);
     } catch (err) {
       console.error('Error marking bulk attendance:', err);
       setError('Failed to mark attendance. Please try again.');

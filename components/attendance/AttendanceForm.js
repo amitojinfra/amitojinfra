@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { AttendanceStatus, createEmptyAttendance } from '../../lib/models/Attendance';
+import { AttendanceStatus, createEmptyAttendance, generateAttendanceId } from '../../lib/models/Attendance';
+import attendanceService from '../../lib/services/attendanceService';
 
 const AttendanceForm = ({ 
   employees = [], 
@@ -21,6 +22,8 @@ const AttendanceForm = ({
   const [selectAll, setSelectAll] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [employeesWithAttendance, setEmployeesWithAttendance] = useState(new Set());
+  const [checkingExisting, setCheckingExisting] = useState(false);
 
   // Initialize form data
   useEffect(() => {
@@ -50,6 +53,30 @@ const AttendanceForm = ({
       }));
     }
   }, [employees, mode, user, formData.date]);
+
+  // Check for existing attendance when date or employees change
+  useEffect(() => {
+    const checkExistingAttendance = async () => {
+      if (employees.length > 0 && formData.date && mode === 'bulk') {
+        setCheckingExisting(true);
+        try {
+          const employeeIds = employees.map(emp => emp.id);
+          const existingAttendance = await attendanceService.getEmployeesWithAttendanceForDate(
+            employeeIds, 
+            formData.date
+          );
+          setEmployeesWithAttendance(existingAttendance);
+        } catch (error) {
+          console.error('Error checking existing attendance:', error);
+          setEmployeesWithAttendance(new Set());
+        } finally {
+          setCheckingExisting(false);
+        }
+      }
+    };
+
+    checkExistingAttendance();
+  }, [employees, formData.date, mode]);
 
   // Handle date change
   const handleDateChange = (e) => {
@@ -240,6 +267,24 @@ const AttendanceForm = ({
 
         {mode === 'bulk' && (
           <>
+            {checkingExisting && (
+              <div className="checking-indicator">
+                <span>🔍 Checking existing attendance for {formData.date}...</span>
+              </div>
+            )}
+            
+            {!checkingExisting && employeesWithAttendance.size > 0 && (
+              <div className="duplicate-info">
+                <span>ℹ️ {employeesWithAttendance.size} employee(s) already have attendance marked for this date. Selecting them will update their existing records.</span>
+              </div>
+            )}
+            
+            {!checkingExisting && employeesWithAttendance.size === 0 && employees.length > 0 && (
+              <div className="no-duplicates-info">
+                <span>✅ No existing attendance found for {formData.date}. All records will be created as new.</span>
+              </div>
+            )}
+            
             {/* Bulk Controls */}
             <div className="bulk-controls">
               <div className="bulk-actions">
@@ -313,7 +358,14 @@ const AttendanceForm = ({
                             checked={isSelected}
                             onChange={() => handleEmployeeSelect(employee.id)}
                           />
-                          <span className="employee-name">{employee.name}</span>
+                          <span className="employee-name">
+                            {employee.name}
+                            {employeesWithAttendance.has(employee.id) && (
+                              <span className="attendance-indicator" title="Attendance already marked for this date">
+                                ✅ Already Marked
+                              </span>
+                            )}
+                          </span>
                         </label>
                       </div>
 
@@ -688,6 +740,54 @@ const AttendanceForm = ({
           opacity: 0.6;
           cursor: not-allowed;
           transform: none;
+        }
+
+        .attendance-indicator {
+          display: inline-block;
+          margin-left: 8px;
+          padding: 2px 6px;
+          background: #d4edda;
+          color: #155724;
+          border: 1px solid #c3e6cb;
+          border-radius: 3px;
+          font-size: 0.7rem;
+          font-weight: 500;
+          vertical-align: middle;
+        }
+
+        .employee-item:has(.attendance-indicator) {
+          border-left: 4px solid #28a745;
+        }
+
+        .checking-indicator {
+          background: #e3f2fd;
+          border: 1px solid #bbdefb;
+          border-radius: 4px;
+          padding: 8px 12px;
+          margin-bottom: 16px;
+          font-size: 0.9rem;
+          color: #1565c0;
+          text-align: center;
+        }
+
+        .duplicate-info {
+          background: #fff3cd;
+          border: 1px solid #ffeaa7;
+          border-radius: 4px;
+          padding: 8px 12px;
+          margin-bottom: 16px;
+          font-size: 0.9rem;
+          color: #856404;
+        }
+
+        .no-duplicates-info {
+          background: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 4px;
+          padding: 8px 12px;
+          margin-bottom: 16px;
+          font-size: 0.9rem;
+          color: #155724;
         }
 
         @media (max-width: 768px) {

@@ -96,13 +96,35 @@ export default function AttendanceDashboard() {
   };
 
   const handleMarkAttendance = async (attendanceData) => {
+    setError('');
+    
     try {
       if (Array.isArray(attendanceData)) {
         // Bulk attendance
-        await attendanceService.markBulkAttendance(attendanceData);
+        const results = await attendanceService.markBulkAttendance(attendanceData);
+        
+        // Show detailed feedback for bulk operations
+        let message = `Successfully processed ${results.success} employees!`;
+        if (results.created > 0 && results.updated > 0) {
+          message += ` (${results.created} new, ${results.updated} updated)`;
+        } else if (results.updated > 0) {
+          message += ` (${results.updated} updated - already marked today)`;
+        }
+        
+        console.log(message);
+        
+        if (results.errors > 0) {
+          setError(`${message} However, ${results.errors} records failed to process.`);
+        }
       } else {
-        // Single attendance (if needed)
-        await attendanceService.markAttendance(attendanceData);
+        // Single attendance
+        const result = await attendanceService.markAttendance(attendanceData);
+        
+        if (result.operation === 'updated') {
+          console.log('Attendance updated for employee (already marked today)');
+        } else {
+          console.log('New attendance record created');
+        }
       }
 
       // Reload data
