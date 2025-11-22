@@ -20,6 +20,9 @@ const Header = () => {
     if (pathname === '/salary') {
       return router.pathname.startsWith('/salary') ? 'active' : '';
     }
+    if (pathname === '/expenses') {
+      return router.pathname.startsWith('/expenses') ? 'active' : '';
+    }
     return router.pathname === pathname ? 'active' : '';
   };
 
@@ -67,6 +70,11 @@ const Header = () => {
                   <li>
                     <Link href="/salary" className={isActive('/salary')}>
                       Salary
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/expenses" className={isActive('/expenses')}>
+                      Expenses
                     </Link>
                   </li>
                 </>
